@@ -9,7 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -37,13 +36,13 @@ public class Main {
 
         CloseableHttpResponse response = httpClient.execute(request);
 
-        NasaJson nasaJson = mapper.readValue(response.getEntity().getContent(), new TypeReference<NasaJson>() {
+        NasaJson nasaJson = mapper.readValue(response.getEntity().getContent(), new TypeReference<>() {
         });
 
         String picUrl = nasaJson.getUrl();
         String fileName = picUrl.substring(picUrl.lastIndexOf('/') + 1);
 
-        if (download(picUrl, fileName)) System.out.println("Download successful");;
+        if (download(picUrl, fileName)) System.out.println("Download successful");
         //if (downloadWithNIO(picUrl, fileName)) System.out.println("Download via NIO successful");
 
 
@@ -59,9 +58,6 @@ public class Main {
                 fout.flush();
             }
             return true;
-        } catch (MalformedURLException | FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -72,9 +68,6 @@ public class Main {
         try (InputStream in = URI.create(url).toURL().openStream()) {
             Files.copy(in, Paths.get(fileName));
             return true;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
